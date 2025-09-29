@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fall Agenda - Data Science & AI Club</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            background: white;
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 60px;
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .slide h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin: 30px 0 20px 0;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.5em;
+            margin: 20px 0 10px 0;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.3em;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .theme-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .theme-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .theme-box li {
+            padding: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .theme-box li:before {
+            content: "▸ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .goal-box {
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+
+        .goal-box strong {
+            color: #764ba2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .highlight-row {
+            background: #fff3cd;
+            font-weight: 600;
+        }
+
+        .logistics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .logistics-card {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #667eea;
+        }
+
+        .logistics-card h4 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .logistics-card p {
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .prize-highlight {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #667eea;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background: #667eea;
+            color: white;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .session-format {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
+            color: #2e7d32;
+        }
+
+        ul.bullet-list {
+            padding-left: 30px;
+            line-height: 1.8;
+        }
+
+        ul.bullet-list li {
+            margin: 10px 0;
+            font-size: 1.05em;
+        }
+
+        strong {
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1 -->
+        <div class="slide active">
+            <h1>🤖 The AI Fall Agenda</h1>
+            <div class="subtitle">Data Science & AI Club<br>October – November 2025: From Fundamentals to Future Frontiers</div>
+            
+            <div class="theme-box">
+                <h3>📅 Theme:</h3>
+                <ul>
+                    <li><strong>October:</strong> Core Technical Skills & Advanced AI Workflows (RAG, Agents, n8n)</li>
+                    <li><strong>November:</strong> Showcase, Research, and Project Finalization</li>
+                </ul>
+            </div>
+
+            <div class="goal-box">
+                <strong>🎯 Goal for this Period:</strong> Equip members with cutting-edge AI and Data Science skills, demonstrate proficiency through showcases, and prepare for the strategic <strong>December Hackathon</strong>.
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide">
+            <h1>October Focus</h1>
+            <h2>🎓 Mastering Generative AI and Technical Foundations</h2>
+            
+            <div class="session-format">
+                📋 Session Format: 5-min Icebreaker → Session Content → 10-min Kahoot Quiz
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Session Title</th>
+                        <th>Key Takeaways & Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight-row">
+                        <td><strong>Oct 2</strong></td>
+                        <td>Thurs</td>
+                        <td>12:00 PM - 1:00 PM</td>
+                        <td><strong>MANDATORY KICKOFF: Club Vision & Agenda Walkthrough</strong></td>
+                        <td>Intro to Data Science/AI. Full agenda and planning. Hot Seminar overview (Prof. Hetrick). Tips to ace the Hackathon!</td>
+                    </tr>
+                    <tr>
+                        <td>Oct 6</td>
+                        <td>Mon</td>
+                        <td>3:00 PM - 5:00 PM</td>
+                        <td>Basics Workshop 1: Data Science Fundamentals</td>
+                        <td>Core programming, statistical methods, and essential data visualization tools. Focus on the foundations needed for modeling.</td>
+                    </tr>
+                    <tr>
+                        <td>Oct 15</td>
+                        <td>Wed</td>
+                        <td>3:00 PM - 5:00 PM</td>
+                        <td>Basics Workshop 2: Generative AI Foundations</td>
+                        <td>Understanding LLMs, Prompt Engineering fundamentals, and identifying current AI trends (RAG/MCP concepts).</td>
+                    </tr>
+                    <tr>
+                        <td>Oct 20</td>
+                        <td>Mon</td>
+                        <td>3:00 PM - 5:00 PM</td>
+                        <td>Advanced Workshop 3: RAG, LLMs, and Complex Prompting</td>
+                        <td>Hands-on with Retrieval-Augmented Generation (RAG) and applying Model-Context-Protocol (MCP) to real-world data problems.</td>
+                    </tr>
+                    <tr>
+                        <td>Oct 29</td>
+                        <td>Wed</td>
+                        <td>3:00 PM - 5:00 PM</td>
+                        <td>Advanced Workshop 4: Agentic AI & Workflow Automation</td>
+                        <td>Designing full AI Workflows and integrating agents. Introduction to no-code tools like n8n.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide">
+            <h1>November Focus</h1>
+            <h2>🚀 Showcase, Research, and Prep</h2>
+            
+            <div class="session-format">
+                📋 Session Format: 5-min Icebreaker → Session Content → 10-min Kahoot Quiz
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Session Title</th>
+                        <th>Key Takeaways & Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Nov 3</td>
+                        <td>Mon</td>
+                        <td>3:00 PM - 5:00 PM</td>
+                        <td>Vibe Coding Session: Project Prep & Collaboration</td>
+                        <td>Hands-on coding session dedicated to building foundational elements for the upcoming showcases. Focus on GitHub repository setup and code documentation.</td>
+                    </tr>
+                    <tr>
+                        <td>Nov 12</td>
+                        <td>Wed</td>
+                        <td>3:00 PM - 5:00 PM</td>
+                        <td>Project Showcase & Feedback</td>
+                        <td>Members present personal data science projects, class assignments, or mini-apps. Receive constructive peer and mentor feedback.</td>
+                    </tr>
+                    <tr>
+                        <td>Nov 17</td>
+                        <td>Mon</td>
+                        <td>3:00 PM - 5:00 PM</td>
+                        <td>Research Showcase & Journal Club</td>
+                        <td>Members or faculty present and discuss recent papers on cutting-edge topics (e.g., Generative AI ethics, new Agentic AI architecture).</td>
+                    </tr>
+                    <tr>
+                        <td>Nov 26</td>
+                        <td>Wed</td>
+                        <td>3:00 PM - 5:00 PM</td>
+                        <td>Career Readiness & Hackathon Final Prep</td>
+                        <td>Final resume/LinkedIn review session. Preparation for the December Hackathon: team strategy, challenge overview, and resource allocation.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide">
+            <h1>Next Steps & Key Logistics</h1>
+            <h2>📌 How to Prepare and Get Involved</h2>
+
+            <div class="logistics-grid">
+                <div class="logistics-card">
+                    <h4>🎯 Kickoff Meeting</h4>
+                    <p><strong>Thursday, October 2nd</strong><br>12:00 PM - 1:00 PM<br>Don't miss this!</p>
+                </div>
+
+                <div class="logistics-card">
+                    <h4>📚 Weekly Workshops</h4>
+                    <p>Every <strong>Monday or Wednesday</strong><br>3:00 PM - 5:00 PM<br>Hands-on learning sessions</p>
+                </div>
+
+                <div class="logistics-card">
+                    <h4>💻 December Hackathon</h4>
+                    <p>The club Hackathon is now scheduled for the <strong>first week of December!</strong><br>Plan your team and ideas now.</p>
+                </div>
+
+                <div class="logistics-card">
+                    <h4>🍕 Refreshments</h4>
+                    <p>We will provide <strong>Indian snacks</strong> and refreshments (Boba and Pizza) at all major events!</p>
+                </div>
+            </div>
+
+            <div class="prize-highlight">
+                🏆 GRAND PRIZE: Winner with the highest accumulated Kahoot points by end of November receives a FREE ticket to an industry event or conference!
+            </div>
+
+            <h3>📊 Knowledge Testing & Engagement:</h3>
+            <ul class="bullet-list">
+                <li><strong>Kahoot Quizzes:</strong> 10-minute quiz at the end of every Monday/Wednesday session to test knowledge and earn points</li>
+                <li><strong>Icebreakers:</strong> Every session starts with a quick icebreaker to get to know your fellow club members</li>
+                <li><strong>Competition:</strong> Track your points throughout the semester and compete for the grand prize!</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">4</span>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prev-btn" onclick="prevSlide()">← Previous</button>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        showSlide(0);
+    </script>
+</body>
+</html>
